@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_marginTop="10dp"
+    android:background="@color/colorAccent"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    app:cardCornerRadius="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/name"
+
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:text="Elshod Rakhmonov"
+                android:textColor="#B88576"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/number"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+
+                android:paddingRight="16dp"
+                android:text="+998986921151"
+                android:textAlignment="textEnd"
+                android:textColor="#B88576"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/my_call_button"
+            android:layout_width="32dp"
+            android:layout_marginLeft="16.dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/call_phone"
+            android:backgroundTint="@color/call"
+            android:contentDescription="call" />
+
+        <ImageButton
+            android:layout_marginRight="16dp"
+            android:padding="16dp"
+            android:background="@drawable/message"
+            android:backgroundTint="@color/message"
+            android:id="@+id/my_sms_button"
+            android:layout_width="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="32dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
