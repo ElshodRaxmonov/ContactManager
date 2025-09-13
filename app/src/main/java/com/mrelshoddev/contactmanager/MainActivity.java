@@ -1,6 +1,7 @@
 package com.mrelshoddev.contactmanager;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,22 +20,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.mrelshoddev.contactmanager.adapter.ContactsAdapter;
 import com.mrelshoddev.contactmanager.adapter.ItemDecoration;
+import com.mrelshoddev.contactmanager.db.dao.ContactsDao;
+import com.mrelshoddev.contactmanager.db.database.ContactsDatabase;
 import com.mrelshoddev.contactmanager.db.entity.Contact;
-import com.mrelshoddev.contactmanager.db.helper.DatabaseHelper;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private ContactsAdapter contactsAdapter;
     private ArrayList<Contact> arrayList = new ArrayList<>();
     private RecyclerView listView;
-    private DatabaseHelper db;
+    private ContactsDatabase db;
+    private ContactsDao dao;
 
 
     @Override
@@ -48,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.recycler_view_contacts);
-        db = new DatabaseHelper(this);
+        db = Room.databaseBuilder(this, ContactsDatabase.class, "ContactsDb").allowMainThreadQueries().build();
+        dao = db.getContactDao();
 
-        arrayList.addAll(db.getAllContacts());
+        new GetAllContacts().execute();
         contactsAdapter = new ContactsAdapter(this, arrayList, MainActivity.this);
         listView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -156,8 +159,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteContact(Contact contact, int position) {
 
         arrayList.remove(position);
-        db.deleteContact(contact);
-        contactsAdapter.notifyDataSetChanged();
+        new DeleteContact().execute();
     }
 
     private void updateContact(String name, String number, int position) {
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         contact.setName(name);
         contact.setNumber(number);
 
-        db.updateContact(contact);
+        dao.updateContact(contact);
 
         arrayList.set(position, contact);
 
@@ -176,12 +178,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void createContact(String name, String email) {
+    private void createContact(String name, String number) {
 
-        long id = db.insertContact(name, email);
+        long id = dao.insertContact(new Contact(0, name, number));
 
 
-        Contact contact = db.getContact(id);
+        Contact contact = dao.getContact(id);
 
         if (contact != null) {
 
@@ -192,5 +194,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    class GetAllContacts extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            arrayList.addAll(dao.getAllContacts());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            contactsAdapter.notifyDataSetChanged();
+            super.onPostExecute(unused);
+        }
+    }
+
+    class DeleteContact extends AsyncTask<Contact, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Contact... contacts) {
+            dao.deleteContact(contacts[0]);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            contactsAdapter.notifyDataSetChanged();
+            super.onPostExecute(unused);
+        }
+    }
 }

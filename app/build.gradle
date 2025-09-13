@@ -29,7 +29,11 @@ android {
 }
 
 dependencies {
+    implementation "androidx.room:room-runtime:2.8.0"
 
+    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
+    // See KSP Quickstart to add KSP to your build
+    annotationProcessor "androidx.room:room-compiler:2.8.0"
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
